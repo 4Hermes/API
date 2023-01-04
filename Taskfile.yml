@@ -1,0 +1,149 @@
+version: 3
+
+env:
+  DOPPLER_PROJECT_NAME: hermes
+  DOPPLER_CONFIG_NAME: nonprod
+  APP_PORT: 5050
+  DEBUG: true
+  DOCKER_VERSION_TAG: v0.0.1
+  DOCKER_CONTAINER_NAME: hermes-api
+  DOCKER_IMAGE_NAME: 4lch4/hermes-api
+
+tasks:
+  display:variables:
+    aliases: [dv, vars]
+    silent: true
+    desc: Writes/echoes the environment variables that are set within the Taskfile to the console/STDOUT.
+    cmds:
+      - echo "----------------------------------------------"
+      - echo "DOPPLER_PROJECT_NAME = {{ .DOPPLER_PROJECT_NAME }}"
+      - echo "DOPPLER_CONFIG_NAME = {{ .DOPPLER_CONFIG_NAME }}"
+      - echo "----------------------------------------------"
+      - echo "API_PORT = {{ .API_PORT }}"
+      - echo "DEBUG = {{ .DEBUG }}"
+      - echo "DOCKER_VERSION_TAG = {{ .DOCKER_VERSION_TAG }}"
+      - echo "DB_CONNECTION_STRING = {{ .DB_CONNECTION_STRING }}"
+      - echo "----------------------------------------------"
+      - echo "DOCKER_CONTAINER_NAME = {{ .DOCKER_CONTAINER_NAME }}"
+      - echo "DOCKER_IMAGE_NAME = {{ .DOCKER_IMAGE_NAME }}"
+      - echo "----------------------------------------------"
+
+  pretty:
+    aliases: [p, format, fmt]
+    silent: false
+    desc: Uses the Prettier CLI tool to format the codebase.
+    cmds: ['prettier --write .']
+
+  build:
+    aliases: [bd]
+    silent: false
+    desc: Builds the project into a Docker Image.
+    cmds:
+      - docker build -t {{ .DOCKER_IMAGE_NAME }}:latest -t {{ .DOCKER_IMAGE_NAME }}:{{ .DOCKER_VERSION_TAG }} .
+
+  build:local:
+    aliases: [bdl]
+    silent: false
+    desc: Builds the project into a Docker Image for running locally without constantly rebuilding the image.
+    cmds:
+      - docker build -f ./Dockerfile.local -t {{ .DOCKER_IMAGE_NAME }}:latest -t {{ .DOCKER_IMAGE_NAME }}:{{ .DOCKER_VERSION_TAG }} -t {{ .DOCKER_IMAGE_NAME }}:local .
+
+  build:mkdocs:
+    aliases: [bm]
+    silent: false
+    desc: Builds the website/project locally, using the mkdocs CLI tool.
+    cmds: ['mkdocs build']
+
+  clean:
+    aliases: [c]
+    silent: false
+    desc: Stops & deletes the Docker container running the project.
+    deps: ['stop']
+    cmds: ['docker rm {{ .DOCKER_CONTAINER_NAME }}']
+
+  start:
+    aliases: [up]
+    silent: false
+    desc: |
+      Starts the project by ensuring a Docker Image was built and then running
+      that Image in a container.
+    cmds:
+      - |
+        docker run -d -p {{ .API_PORT }}:{{ .API_PORT }} \
+          -e "MONGODB_CONNECTION_STRING={{ .MONGODB_CONNECTION_STRING }}" \
+          -e "MONGODB_CONFIG_COLLECTION_NAME={{ .MONGODB_CONFIG_COLLECTION_NAME }}" \
+          -e "MONGODB_CONFIG_COLLECTION_DB_NAME={{ .MONGODB_CONFIG_COLLECTION_DB_NAME }}" \
+          -e "MONGODB_FRIENDS_COLLECTION_NAME={{ .MONGODB_FRIENDS_COLLECTION_NAME }}" \
+          -e "MONGODB_FRIENDS_COLLECTION_DB_NAME={{ .MONGODB_FRIENDS_COLLECTION_DB_NAME }}" \
+          -e "MONGODB_USERS_COLLECTION_NAME={{ .MONGODB_USERS_COLLECTION_NAME }}" \
+          -e "MONGODB_USERS_COLLECTION_DB_NAME={{ .MONGODB_USERS_COLLECTION_DB_NAME }}" \
+          -e "MONGODB_CHECK_INS_COLLECTION_NAME={{ .MONGODB_CHECK_INS_COLLECTION_NAME }}" \
+          -e "MONGODB_CHECK_INS_COLLECTION_DB_NAME={{ .MONGODB_CHECK_INS_COLLECTION_DB_NAME }}" \
+          -e "DEBUG={{ .DEBUG }}" -e "API_PORT={{ .API_PORT }}" -e "OPENAI_API_KEY={{ .OPENAI_API_KEY }}" \
+          --name {{ .DOCKER_CONTAINER_NAME }} {{ .DOCKER_IMAGE_NAME }}:{{ .DOCKER_VERSION_TAG }}
+
+  start:local:
+    aliases: [upl, sl]
+    silent: false
+    desc: |
+      Starts the project by ensuring a Docker Image was built and then running
+      that Image in a container.
+    cmds:
+      # Install dependencies, if not already there.
+      - pnpm i
+
+      # Transpile code, if it hasn't already been done.
+      - tsc
+
+      # Start the Docker container.
+      - |
+        docker run -d -p {{ .API_PORT }}:{{ .API_PORT }} \
+          -e "MONGODB_CONNECTION_STRING={{ .MONGODB_CONNECTION_STRING }}" \
+          -e "MONGODB_CONFIG_COLLECTION_NAME={{ .MONGODB_CONFIG_COLLECTION_NAME }}" \
+          -e "MONGODB_CONFIG_COLLECTION_DB_NAME={{ .MONGODB_CONFIG_COLLECTION_DB_NAME }}" \
+          -e "MONGODB_FRIENDS_COLLECTION_NAME={{ .MONGODB_FRIENDS_COLLECTION_NAME }}" \
+          -e "MONGODB_FRIENDS_COLLECTION_DB_NAME={{ .MONGODB_FRIENDS_COLLECTION_DB_NAME }}" \
+          -e "MONGODB_USERS_COLLECTION_NAME={{ .MONGODB_USERS_COLLECTION_NAME }}" \
+          -e "MONGODB_USERS_COLLECTION_DB_NAME={{ .MONGODB_USERS_COLLECTION_DB_NAME }}" \
+          -e "MONGODB_CHECK_INS_COLLECTION_NAME={{ .MONGODB_CHECK_INS_COLLECTION_NAME }}" \
+          -e "MONGODB_CHECK_INS_COLLECTION_DB_NAME={{ .MONGODB_CHECK_INS_COLLECTION_DB_NAME }}" \
+          -e "DEBUG={{ .DEBUG }}" -e "API_PORT={{ .API_PORT }}" -e "OPENAI_API_KEY={{ .OPENAI_API_KEY }}" \
+          --mount "type=bind,source=$(pwd),target=/srv/api" \
+          --name {{ .DOCKER_CONTAINER_NAME }} {{ .DOCKER_IMAGE_NAME }}:{{ .DOCKER_VERSION_TAG }}
+
+  stop:
+    aliases: [down]
+    silent: false
+    desc: Stops the Docker Container that's locally running the website.
+    cmds: ['docker stop {{ .DOCKER_CONTAINER_NAME }}']
+
+  restart:
+    aliases: [rs]
+    silent: false
+    desc: |
+      Builds the latest version of the image, then restarts the currently
+      running container with the latest version.
+    cmds:
+      - task: build
+      - task: stop
+      - task: clean
+      - task: start
+
+  restart:local:
+    aliases: [rsl]
+    silent: false
+    desc: |
+      Builds the latest version of the image, then restarts the currently
+      running container with the latest version.
+    cmds:
+      - task: build:local
+      - task: stop
+      - task: clean
+      - task: start:local
+
+  push:
+    aliases: [dd]
+    silent: false
+    desc: Push the Docker Image, with all tags, to your configured registry.
+    deps: ['build']
+    cmds: ['docker push --all-tags {{ .DOCKER_IMAGE_NAME }}']

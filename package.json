@@ -1,0 +1,77 @@
+{
+  "name": "@4lch4/hermes-api",
+  "displayName": "Hermes API",
+  "version": "0.0.0",
+  "description": "The API component of Project Hermes, my automated \"check-in\" utility.",
+  "main": "./dist/index.js",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "license": "MIT",
+  "icon": "./Hermes-Logo.svg",
+  "homepage": "https://projecthermes.dev",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dplr:start": "doppler run -p $CRONICLE_PROJECT --config $CRONICLE_CONFIG --command='DEBUG=$DEBUG node ./dist/index.js'",
+    "build": "tsc",
+    "pretty": "prettier --write .",
+    "pretty:git": "prettier --write . && if [[ $(git status -s) ]]; then git commit -a -m 'chore(pretty): project prettied'; fi",
+    "lint": "prettier -c .",
+    "test": "echo 'There are currently no tests available.'",
+    "scan": "snyk monitor && snyk code test",
+    "preversion": "npm run pretty:git",
+    "postversion": "if [[ $(git status -s) ]]; then git commit -a -m 'chore(npm): version bump'; fi"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "4lch4",
+    "signal",
+    "sms",
+    "check-in",
+    "texting",
+    "text",
+    "api",
+    "koa",
+    "koa-router"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.4lch4.io:22022/4lch4/Hermes-API.git"
+  },
+  "author": {
+    "name": "4lch4",
+    "email": "hey@4lch4.email",
+    "url": "https://4lch4.com"
+  },
+  "bugs": {
+    "email": "bugs@4lch4.email",
+    "url": "https://git.4lch4.io/4lch4/Hermes-API/issues"
+  },
+  "dependencies": {
+    "@4lch4/koa-oto": "^2.0.0",
+    "@4lch4/koa-router-printer": "^1.4.3",
+    "@4lch4/logger": "^1.11.0",
+    "@koa/router": "^12.0.0",
+    "ajv": "^8.11.2",
+    "dayjs": "^1.11.7",
+    "fs-extra": "^11.1.0",
+    "joi": "^17.7.0",
+    "koa": "^2.14.1",
+    "koa-body": "^6.0.1",
+    "koa-helmet": "^6.1.0",
+    "mongodb": "^4.13.0",
+    "nanoid": "^4.0.0",
+    "openai": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@types/koa": "^2.13.5",
+    "@types/koa__router": "^12.0.0",
+    "@types/node": "^17.0.12",
+    "prettier": "^2.8.1",
+    "snyk": "^1.1076.0",
+    "typescript": "^4.9.4"
+  }
+}
