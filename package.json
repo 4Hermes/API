@@ -1,8 +1,8 @@
 {
-  "name": "@4lch4/hermes-api",
+  "name": "@4hermes/api-prime",
   "displayName": "Hermes API",
   "version": "0.0.0",
-  "description": "The API component of Project Hermes, my automated \"check-in\" utility.",
+  "description": "**API Prime** is the primary \"gateway\" for all incoming API requests. This means that it will delegate the request to the appropriate sub-service, depending on the route and/or request properties.",
   "main": "./dist/index.js",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,15 +12,11 @@
   "homepage": "https://projecthermes.dev",
   "scripts": {
     "start": "node dist/index.js",
-    "dplr:start": "doppler run -p $CRONICLE_PROJECT --config $CRONICLE_CONFIG --command='DEBUG=$DEBUG node ./dist/index.js'",
     "build": "tsc",
     "pretty": "prettier --write .",
-    "pretty:git": "prettier --write . && if [[ $(git status -s) ]]; then git commit -a -m 'chore(pretty): project prettied'; fi",
     "lint": "prettier -c .",
     "test": "echo 'There are currently no tests available.'",
-    "scan": "snyk monitor && snyk code test",
-    "preversion": "npm run pretty:git",
-    "postversion": "if [[ $(git status -s) ]]; then git commit -a -m 'chore(npm): version bump'; fi"
+    "scan": "snyk monitor && snyk code test"
   },
   "engines": {
     "node": ">=16.0.0"
@@ -38,7 +34,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@git.4lch4.io:22022/4lch4/Hermes-API.git"
+    "url": "ssh://git@git.4lch4.io:22022/Hermes/API-Prime.git"
   },
   "author": {
     "name": "4lch4",
@@ -47,7 +43,7 @@
   },
   "bugs": {
     "email": "bugs@4lch4.email",
-    "url": "https://git.4lch4.io/4lch4/Hermes-API/issues"
+    "url": "https://git.4lch4.io/Hermes/API-Prime/issues"
   },
   "dependencies": {
     "@4lch4/koa-oto": "^2.0.0",
