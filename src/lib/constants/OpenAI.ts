@@ -1,10 +1,9 @@
-
 /**
  * Creates a prompt to use as the default prompt for the ChatGPT AI model. It'll
  * prompt ChatGPT to do something like so:
  *
  * ```text
- * Write a message from me, Devin/4lch4, to my friend, ${friendName}, where I'm
+ * Write a message from me, ${username}, to my friend, ${friendName}, where I'm
  * checking in on them to see how they've been doing since we last spoke on
  * ${lastContactDate}.
  * ```
@@ -13,7 +12,7 @@
  * specified date, like so:
  *
  * ```text
- * Write a message from me, Devin/4lch4, to my friend, ${friendName}, where I'm
+ * Write a message from me, ${username}, to my friend, ${friendName}, where I'm
  * checking in on them to see how they've been doing since we last spoke on
  * ${lastContactDate}.
  * ```
