@@ -34,7 +34,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@git.4lch4.io:22022/Hermes/API-Prime.git"
+    "url": "git@github.com:4Hermes/API.git"
   },
   "author": {
     "name": "4lch4",
@@ -43,7 +43,7 @@
   },
   "bugs": {
     "email": "bugs@4lch4.email",
-    "url": "https://git.4lch4.io/Hermes/API-Prime/issues"
+    "url": "https://git.4lch4.io/4Hermes/API/issues"
   },
   "dependencies": {
     "@4lch4/koa-oto": "^2.0.0",
