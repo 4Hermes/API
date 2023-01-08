@@ -1,8 +1,8 @@
 {
-  "name": "@4hermes/api-prime",
+  "name": "@4hermes/api",
   "displayName": "Hermes API",
   "version": "0.0.0",
-  "description": "**API Prime** is the primary \"gateway\" for all incoming API requests. This means that it will delegate the request to the appropriate sub-service, depending on the route and/or request properties.",
+  "description": "This is the API component of Project Hermes and handles the actual processing of the project.",
   "main": "./dist/index.js",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
