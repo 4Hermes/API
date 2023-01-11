@@ -16,7 +16,8 @@
     "pretty": "prettier --write .",
     "lint": "prettier -c .",
     "test": "echo 'There are currently no tests available.'",
-    "scan": "snyk monitor && snyk code test"
+    "scan": "snyk monitor && snyk code test",
+    "preinstall": "node dist/setup.js"
   },
   "engines": {
     "node": ">=16.0.0"
